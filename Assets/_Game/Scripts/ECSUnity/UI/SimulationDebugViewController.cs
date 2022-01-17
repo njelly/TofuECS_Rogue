@@ -9,14 +9,17 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity.UI
     public class SimulationDebugViewModel
     {
         public Func<int> GetCurrentTick;
+        public Func<Vector2> GetPlayerPosition;
     }
     
     public class SimulationDebugViewController : ViewController<SimulationDebugViewModel>
     {
         [SerializeField] private TextMeshProUGUI _fpsLabel;
         [SerializeField] private TextMeshProUGUI _currentTickLabel;
+        [SerializeField] private TextMeshProUGUI _playerPositionLabel;
 
         private Func<int> _getCurrentTick;
+        private Func<Vector2> _getPlayerPosition;
         private float _lastFpsUpdate;
         private int _framesPerSecondCounter;
         
@@ -24,6 +27,7 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity.UI
         {
             _getCurrentTick = model.GetCurrentTick;
             _lastFpsUpdate = Time.time;
+            _getPlayerPosition = model.GetPlayerPosition;
             
             return Task.CompletedTask;
         }
@@ -32,21 +36,16 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity.UI
         {
             UpdateFPSLabel();
             UpdateCurrentTickLabel();
+            UpdatePlayerPositionLabel();
         }
 
         private void UpdateCurrentTickLabel()
         {
-            if (!_currentTickLabel)
-                return;
-            
             _currentTickLabel.text = $"Tick: {_getCurrentTick?.Invoke()}";
         }
 
         private void UpdateFPSLabel()
         {
-            if (!_fpsLabel)
-                return;
-
             _framesPerSecondCounter++;
             
             if (Time.time - _lastFpsUpdate < 1f)
@@ -55,6 +54,11 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity.UI
             _lastFpsUpdate = Time.time;
             _fpsLabel.text = $"FPS: {_framesPerSecondCounter}";
             _framesPerSecondCounter = 0;
+        }
+
+        private void UpdatePlayerPositionLabel()
+        {
+            _playerPositionLabel.text = $"Player Pos: {_getPlayerPosition?.Invoke():F2}";
         }
     }
 }

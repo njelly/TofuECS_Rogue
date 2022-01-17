@@ -1,5 +1,9 @@
+using System.Numerics;
+
 namespace Tofunaut.TofuECS_Rogue.ECS
 {
+
+    
     public enum ViewId
     {
         None = 0,
@@ -9,19 +13,24 @@ namespace Tofunaut.TofuECS_Rogue.ECS
     public struct Unit
     {
         // movement
-        public bool IsMoving => TimeToDestination > 0;
-        public int PrevX;
-        public int PrevY;
-        public int X;
-        public int Y;
-        public float TimeToDestination;
+        public bool IsMoving => CurrentPos != TargetPos;
+        public Vector2 TargetPos;
+        public Vector2 CurrentPos;
+        public CardinalDirection4 Facing;
         public float MoveSpeed;
         
         // view
         public ViewId CurrentViewId;
         
         // input
-        public float InputDirX;
-        public float InputDirY;
+        public UnitInput Input;
+    }
+    
+    public struct UnitInput
+    {
+        public const int FaceThreshold = 1;
+        public const int MoveThreshold = 2;
+        public CardinalDirection4 Dir;
+        public int DirMagnitude;
     }
 }

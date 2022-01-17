@@ -22,8 +22,7 @@ namespace Tofunaut.TofuECS_Rogue.ECS
                 return;
             
             // set the player unit's input
-            unit->InputDirX = eventData.InputDirX;
-            unit->InputDirY = eventData.InputDirY;
+            unit->Input = eventData.UnitInput;
         }
     }
 }

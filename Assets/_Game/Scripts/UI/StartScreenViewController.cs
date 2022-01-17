@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Tofunaut.Bootstrap;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Tofunaut.TofuECS_Rogue.UI

@@ -1,100 +1,115 @@
 using System;
+using System.Numerics;
 using Tofunaut.TofuECS;
 using Tofunaut.TofuECS_Rogue.ECS;
 using Tofunaut.TofuECS.Utilities;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using PlayerInput = Tofunaut.TofuECS_Rogue.ECS.PlayerInput;
 
 namespace Tofunaut.TofuECS_Rogue.ECSUnity
 {
     public class SimulationRunner : MonoBehaviour
     {
-        public static Simulation Current => _instance ? _instance._simulation : null;
-        
-        private static SimulationRunner _instance;
-        
-        private Simulation _simulation;
+        public Simulation Current { get; private set; }
+
+        [SerializeField] private UnitViewManager _unitViewManager;
+
+        private PlayerInputManager _playerInputManager;
 
         private void Awake()
         {
-            if (_instance != null)
-            {
-                Debug.LogError("An instance of SimulationRunner already exists.");
-                Destroy(gameObject);
-                return;
-            }
-
-            _instance = this;
+            enabled = false;
+            _playerInputManager = new PlayerInputManager();
         }
 
         private void Update()
         {
-            _simulation.SystemEvent(new PlayerInput
+            TickSimulation();
+        }
+
+        public void BeginSimulation(InputActionAsset inputActionAsset)
+        {
+            if (Current != null)
             {
-                DeltaTime = Time.deltaTime,
-            });
-            
-            _simulation?.Tick();
-        }
-
-        private void OnDestroy()
-        {
-            if (_instance == this)
-                _instance = null;
-        }
-
-        public static void BeginSimulation()
-        {
-            if (_instance == null)
+                Debug.LogError("a Simulation is already running");
                 return;
-            
-            var s = new Simulation(new UnityLogService(), new ISystem[]
+            }
+
+            enabled = true;
+
+            _playerInputManager.Subscribe(inputActionAsset);
+
+            Current = new Simulation(new UnityLogService(), new ISystem[]
             {
                 new PlayerSystem(),
                 new UnitSystem(),
             });
             
-            s.RegisterSingletonComponent<PlayerInput>();
-            s.RegisterSingletonComponent(new XorShiftRandom(Convert.ToUInt64(DateTime.Now.Ticks)));
-            s.RegisterSingletonComponent(new Player
+            Current.RegisterSingletonComponent<PlayerInput>();
+            Current.RegisterSingletonComponent(new XorShiftRandom(Convert.ToUInt64(DateTime.Now.Ticks)));
+            Current.RegisterSingletonComponent(new Player
             {
                 UnitConfig = new UnitConfig
                 {
                     ViewId = ViewId.Test,
-                    X = 0,
-                    Y = 0,
+                    InitFacing = CardinalDirection4.East,
+                    MoveSpeed = 1,
                 },
             });
             
-            s.RegisterComponent<Unit>(1024);
+            Current.RegisterComponent<Unit>(16);
 
-            s.Buffer<Unit>().OnComponentAdded += _instance.UnitAdded;
-            s.Buffer<Unit>().OnComponentRemoved += _instance.UnitRemoved;
+            Current.Buffer<Unit>().OnComponentAdded += UnitAdded;
+            Current.Buffer<Unit>().OnComponentRemoved += UnitRemoved;
+            UnitSystem.UnitViewIdChanged += UnitViewIdChanged;
             
-            s.Initialize();
+            Current.Initialize();
+        }
 
-            _instance._simulation = s;
+        public void EndSimulation()
+        {
+            enabled = false;
+            
+            Current.Buffer<Unit>().OnComponentAdded -= UnitAdded;
+            Current.Buffer<Unit>().OnComponentRemoved -= UnitRemoved;
+            UnitSystem.UnitViewIdChanged -= UnitViewIdChanged;
+            
+            _unitViewManager.Clear();
+            _playerInputManager.Unsubscribe();
+            _playerInputManager = null;
+
+            Current.Dispose();
+            Current = null;
+        }
+
+        private void TickSimulation()
+        {
+            _playerInputManager.Poll(out var playerInput);
+            Current.SystemEvent(playerInput);
+            Current.Tick();
+        }
+
+        private void UnitViewIdChanged(object sender, UnitViewIdEventArgs e)
+        {
+            _unitViewManager.ReleaseUnitView(e.Entity, e.PrevViewId);
+            _unitViewManager.CreateUnitView(Current, e.Entity, e.NewViewId);
         }
 
         private void UnitAdded(object sender, EntityEventArgs e)
         {
-            Debug.Log("unit added");
+            if (!Current.Buffer<Unit>().Get(e.Entity, out var unit))
+                return;
+            
+            _unitViewManager.CreateUnitView(Current, e.Entity, unit.CurrentViewId);
         }
 
         private void UnitRemoved(object sender, EntityEventArgs e)
         {
-            
-        }
-
-        public static void EndSimulation()
-        {
-            if(_instance == null)
+            if (!Current.Buffer<Unit>().Get(e.Entity, out var unit))
                 return;
             
-            _instance._simulation.Buffer<Unit>().OnComponentAdded -= _instance.UnitAdded;
-            _instance._simulation.Buffer<Unit>().OnComponentRemoved -= _instance.UnitRemoved;
-
-            _instance._simulation.Dispose();
-            _instance._simulation = null;
+            _unitViewManager.ReleaseUnitView(e.Entity, unit.CurrentViewId);
         }
     }
 }
