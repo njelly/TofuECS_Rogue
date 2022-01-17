@@ -3,12 +3,14 @@ using Tofunaut.TofuECS_Rogue.ECSUnity.UI;
 using Tofunaut.TofuECS_Rogue.UI;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.InputSystem;
 
 namespace Tofunaut.TofuECS_Rogue
 {
     public class AppContext : MonoBehaviour
     {
         [SerializeField] private Canvas _canvas;
+        [SerializeField] private InputActionAsset _inputActionAsset;
 
         [Header("UI Views")]
         [SerializeField] private AssetReference _startScreenViewReference;
@@ -25,7 +27,7 @@ namespace Tofunaut.TofuECS_Rogue
             var appStateMachine = new AppStateMachine();
             appStateMachine.RegisterState<StartScreenState, StartScreenStateRequest>(
                 new StartScreenState(appStateMachine, viewStack));
-            appStateMachine.RegisterState<InGameState, InGameStateRequest>(new InGameState(appStateMachine, viewStack));
+            appStateMachine.RegisterState<InGameState, InGameStateRequest>(new InGameState(appStateMachine, viewStack, _inputActionAsset));
 
             await appStateMachine.EnterState(new StartScreenStateRequest());
         }
