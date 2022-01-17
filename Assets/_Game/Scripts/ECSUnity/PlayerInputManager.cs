@@ -57,7 +57,6 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
         {
             _current.UnitInput.DirMagnitude = UnitInput.FaceThreshold;
             var v = obj.ReadValue<Vector2>();
-            Debug.Log(v.ToString("F2"));
             if (Mathf.Abs(v.x) > Mathf.Abs(v.y))
                 _current.UnitInput.Dir = v.x > 0 ? CardinalDirection4.East : CardinalDirection4.West;
             else
@@ -68,6 +67,7 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
         {
             _current.UnitInput.DirMagnitude = UnitInput.MoveThreshold;
             var v = obj.ReadValue<Vector2>();
+            Debug.Log(v.ToString("F2"));
             if (Mathf.Abs(v.x) > Mathf.Abs(v.y))
                 _current.UnitInput.Dir = v.x > 0 ? CardinalDirection4.East : CardinalDirection4.West;
             else

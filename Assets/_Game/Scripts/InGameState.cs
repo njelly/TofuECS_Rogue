@@ -50,7 +50,7 @@ namespace Tofunaut.TofuECS_Rogue
                         return _simulationRunner.Current.Buffer<Unit>().Get(playerUnitEntity, out var unit)
                             ? Vector2Utils.ToUnityVector2(unit.CurrentPos)
                             : Vector2.zero;
-                    }
+                    },
                 });
             
             _inputActionAsset.FindAction("Cancel").performed += Cancel_OnPerformed;

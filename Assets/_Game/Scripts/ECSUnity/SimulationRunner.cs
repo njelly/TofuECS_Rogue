@@ -54,7 +54,7 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
                 {
                     ViewId = ViewId.Test,
                     InitFacing = CardinalDirection4.East,
-                    MoveSpeed = 1,
+                    MoveSpeed = 3,
                 },
             });
             
