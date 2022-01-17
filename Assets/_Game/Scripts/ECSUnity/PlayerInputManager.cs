@@ -1,4 +1,3 @@
-using System;
 using Tofunaut.TofuECS_Rogue.ECS;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -13,7 +12,7 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
         private InputActionAsset _inputActionAsset;
         private PlayerInput _current;
 
-        public void Subscribe(InputActionAsset inputActionAsset)
+        public void Enable(InputActionAsset inputActionAsset)
         {
             if (_inputActionAsset != null)
             {
@@ -30,18 +29,20 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
             moveAction.Enable();
         }
 
-        public void Unsubscribe()
+        public void Disable()
         {
             if (_inputActionAsset == null)
             {
                 Debug.LogError("PlayerInputManager has not yet subscribed.");
                 return;
             }
+
+            _current = default;
             
             var moveAction = _inputActionAsset.FindAction("Player/Move");
-            moveAction.started += Move_Started;
-            moveAction.performed += Move_Performed;
-            moveAction.canceled += Move_Canceled;
+            moveAction.started -= Move_Started;
+            moveAction.performed -= Move_Performed;
+            moveAction.canceled -= Move_Canceled;
             moveAction.Disable();
 
             _inputActionAsset = null;
@@ -67,7 +68,6 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
         {
             _current.UnitInput.DirMagnitude = UnitInput.MoveThreshold;
             var v = obj.ReadValue<Vector2>();
-            Debug.Log(v.ToString("F2"));
             if (Mathf.Abs(v.x) > Mathf.Abs(v.y))
                 _current.UnitInput.Dir = v.x > 0 ? CardinalDirection4.East : CardinalDirection4.West;
             else
@@ -77,6 +77,7 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
         private void Move_Canceled(InputAction.CallbackContext obj)
         {
             _current.UnitInput.DirMagnitude = 0;
+            _current.UnitInput.Dir = CardinalDirection4.None;
         }
     }
 }

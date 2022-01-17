@@ -38,7 +38,7 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
 
             enabled = true;
 
-            _playerInputManager.Subscribe(inputActionAsset);
+            _playerInputManager.Enable(inputActionAsset);
 
             Current = new Simulation(new UnityLogService(), new ISystem[]
             {
@@ -76,8 +76,7 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
             UnitSystem.UnitViewIdChanged -= UnitViewIdChanged;
             
             _unitViewManager.Clear();
-            _playerInputManager.Unsubscribe();
-            _playerInputManager = null;
+            _playerInputManager.Disable();
 
             Current.Dispose();
             Current = null;
