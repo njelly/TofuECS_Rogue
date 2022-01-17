@@ -53,21 +53,45 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
                 new UnitSystem(),
             });
             
-            s.RegisterSingletonComponent(new XorShiftRandom(Convert.ToUInt64(DateTime.Now.Ticks)));
             s.RegisterSingletonComponent<PlayerInput>();
-            s.RegisterSingletonComponent<Player>();
+            s.RegisterSingletonComponent(new XorShiftRandom(Convert.ToUInt64(DateTime.Now.Ticks)));
+            s.RegisterSingletonComponent(new Player
+            {
+                UnitConfig = new UnitConfig
+                {
+                    ViewId = ViewId.Test,
+                    X = 0,
+                    Y = 0,
+                },
+            });
             
             s.RegisterComponent<Unit>(1024);
+
+            s.Buffer<Unit>().OnComponentAdded += _instance.UnitAdded;
+            s.Buffer<Unit>().OnComponentRemoved += _instance.UnitRemoved;
             
             s.Initialize();
 
             _instance._simulation = s;
         }
 
+        private void UnitAdded(object sender, EntityEventArgs e)
+        {
+            Debug.Log("unit added");
+        }
+
+        private void UnitRemoved(object sender, EntityEventArgs e)
+        {
+            
+        }
+
         public static void EndSimulation()
         {
             if(_instance == null)
                 return;
+            
+            _instance._simulation.Buffer<Unit>().OnComponentAdded -= _instance.UnitAdded;
+            _instance._simulation.Buffer<Unit>().OnComponentRemoved -= _instance.UnitRemoved;
 
             _instance._simulation.Dispose();
             _instance._simulation = null;

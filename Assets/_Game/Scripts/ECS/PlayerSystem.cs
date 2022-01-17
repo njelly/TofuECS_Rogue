@@ -7,16 +7,23 @@ namespace Tofunaut.TofuECS_Rogue.ECS
         public unsafe void Initialize(Simulation s)
         {
             var player = s.GetSingletonComponentUnsafe<Player>();
-            player->UnitEntity = s.CreateEntity();
-            s.Buffer<Unit>().Set(player->UnitEntity);
+            player->UnitEntity = UnitSystem.CreateUnit(s, player->UnitConfig);
         }
 
         public void Process(Simulation s) { }
 
-        public void OnSystemEvent(Simulation s, in PlayerInput eventData)
+        public unsafe void OnSystemEvent(Simulation s, in PlayerInput eventData)
         {
             // save the player input to the state of a singleton component
             s.SetSingletonComponent(eventData);
+            var player = s.GetSingletonComponent<Player>();
+
+            if (!s.Buffer<Unit>().GetUnsafe(player.UnitEntity, out var unit)) 
+                return;
+            
+            // set the player unit's input
+            unit->InputDirX = eventData.InputDirX;
+            unit->InputDirY = eventData.InputDirY;
         }
     }
 }

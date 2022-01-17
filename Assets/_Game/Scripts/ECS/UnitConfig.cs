@@ -4,6 +4,7 @@ namespace Tofunaut.TofuECS_Rogue.ECS
     {
         public int X;
         public int Y;
-        public int ViewId;
+        public ViewId ViewId;
+        public float MoveSpeed;
     }
 }
