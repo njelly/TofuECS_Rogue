@@ -72,6 +72,7 @@ namespace Tofunaut.TofuECS_Rogue.ECS
                     unit->TargetPos += dirToVector;
                     var overStepDist = (float) (step.Length() - Math.Sqrt(toTargetDistSquared));
                     unit->CurrentPos += overStepDist * dirToVector;
+                    unit->Facing = unit->Input.Dir;
                 }
             }
             // the unit has come to a stop

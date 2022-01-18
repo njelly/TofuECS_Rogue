@@ -52,7 +52,7 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
             {
                 UnitConfig = new UnitConfig
                 {
-                    ViewId = ViewId.Test,
+                    ViewId = ViewId.Player,
                     InitFacing = CardinalDirection4.East,
                     MoveSpeed = 3,
                 },

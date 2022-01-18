@@ -8,6 +8,7 @@ namespace Tofunaut.TofuECS_Rogue.ECS
     {
         None = 0,
         Test = 1,
+        Player = 2,
     }
     
     public struct Unit

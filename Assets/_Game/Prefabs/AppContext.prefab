@@ -348,3 +348,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _testPrefab: {fileID: 5931663695797266829, guid: 9148f01a0b74b46f38714e970794a237, type: 3}
+  _playerPrefab: {fileID: 5931663695797266829, guid: 731953ac4ec954257b4fd4a0f2b9d257, type: 3}

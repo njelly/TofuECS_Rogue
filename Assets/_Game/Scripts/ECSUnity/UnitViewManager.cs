@@ -10,6 +10,7 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
     public class UnitViewManager : MonoBehaviour
     {
         [SerializeField] private UnitView _testPrefab;
+        [SerializeField] private UnitView _playerPrefab;
 
         private Dictionary<ViewId, ObjectPool<UnitView>> _viewIdToPool;
         private Dictionary<int, UnitView> _entityToUnitView;
@@ -22,15 +23,21 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
 
         public void CreateUnitView(Simulation s, int entity, ViewId viewId)
         {
+            if (viewId == ViewId.None)
+                return;
+            
             var prefab = viewId switch
             {
-                ViewId.None => null,
                 ViewId.Test => _testPrefab,
+                ViewId.Player => _playerPrefab,
                 _ => throw new ArgumentOutOfRangeException(nameof(viewId), viewId, null)
             };
 
             if (prefab == null)
+            {
+                Debug.LogError($"null UnitView prefab for ViewId {viewId}");
                 return;
+            }
 
             // create the pool if it doesn't exist
             if (!_viewIdToPool.TryGetValue(viewId, out var pool))
