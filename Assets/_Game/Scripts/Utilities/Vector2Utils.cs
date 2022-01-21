@@ -1,4 +1,4 @@
-namespace Tofunaut.TofuECS_Rogue
+namespace Tofunaut.TofuECS_Rogue.Utilities
 {
     public class Vector2Utils
     {

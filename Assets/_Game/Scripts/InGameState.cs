@@ -3,6 +3,7 @@ using Tofunaut.Bootstrap;
 using Tofunaut.TofuECS_Rogue.ECS;
 using Tofunaut.TofuECS_Rogue.ECSUnity;
 using Tofunaut.TofuECS_Rogue.ECSUnity.UI;
+using Tofunaut.TofuECS_Rogue.Utilities;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using PlayerInput = UnityEngine.InputSystem.PlayerInput;

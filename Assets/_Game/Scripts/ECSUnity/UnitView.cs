@@ -1,5 +1,6 @@
 using Tofunaut.TofuECS;
 using Tofunaut.TofuECS_Rogue.ECS;
+using Tofunaut.TofuECS_Rogue.Utilities;
 using UnityEngine;
 
 namespace Tofunaut.TofuECS_Rogue.ECSUnity
