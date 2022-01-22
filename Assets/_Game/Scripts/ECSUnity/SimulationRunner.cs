@@ -29,6 +29,7 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
         [SerializeField] private InputActionAsset _inputActionAsset;
         [SerializeField] private TilemapManager _tilemapManager;
         [SerializeField] private UnitViewManager _unitViewManager;
+        [SerializeField] private int _floorGenSeed;
 
         private PlayerInputManager _playerInputManager;
         private Tilemap _tilemap;
@@ -73,7 +74,7 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
             {
                 MaxRoomSize = 20,
                 MinRoomSize = 10,
-                Seed = 1234,
+                Seed = _floorGenSeed,
             });
 
             enabled = true;
