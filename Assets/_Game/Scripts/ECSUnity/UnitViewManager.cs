@@ -43,7 +43,7 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
             if (!_viewIdToPool.TryGetValue(viewId, out var pool))
             {
                 pool = new ObjectPool<UnitView>(
-                    () => Instantiate(prefab),
+                    () => Instantiate(prefab, transform, false),
                     unitView => unitView.gameObject.SetActive(true), 
                     unitView => unitView.gameObject.SetActive(false));
                 //unitView => Destroy(unitView.gameObject)); Unity bug??? this never gets called!

@@ -14,9 +14,10 @@ namespace Tofunaut.TofuECS_Rogue.Generation
     
     public static class FloorGen
     {
-        public static async Task<Tile[]> GenerateFloorAsync(FloorGenParams floorGenParams)
+        public static async void RequestFloor(FloorGenParams floorGenParams, Action<Tile[]> onComplete)
         {
-            return await Task.Run(() => GenerateFloor(floorGenParams));
+            var tiles = await Task.Run(() => GenerateFloor(floorGenParams));
+            onComplete?.Invoke(tiles);
         }
         
         private static Tile[] GenerateFloor(FloorGenParams floorGenParams)
@@ -25,7 +26,7 @@ namespace Tofunaut.TofuECS_Rogue.Generation
             var toReturn = new Tile[Floor.MaxFloorSize * Floor.MaxFloorSize];
             for (var i = 0; i < toReturn.Length; i++)
             {
-                if (i is < Floor.MaxFloorSize or > Floor.MaxFloorSize * Floor.MaxFloorSize - Floor.MaxFloorSize || i % Floor.MaxFloorSize == 0 || i % Floor.MaxFloorSize == 1)
+                if (i is < Floor.MaxFloorSize or > Floor.MaxFloorSize * Floor.MaxFloorSize - Floor.MaxFloorSize || i % Floor.MaxFloorSize == 0 || i % Floor.MaxFloorSize == Floor.MaxFloorSize - 1)
                 {
                     toReturn[i].Type = TileType.Bedrock;
                 }

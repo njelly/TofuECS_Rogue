@@ -1,0 +1,18 @@
+{
+    "name": "TofuECS_Rogue.ECSUnity.Tiles",
+    "rootNamespace": "",
+    "references": [
+        "GUID:4500caf9943774a7083bb040228c562c"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "TofuECS.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

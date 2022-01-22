@@ -39,7 +39,7 @@ namespace Tofunaut.TofuECS_Rogue
         
         public override async Task OnEnter(InGameStateRequest request)
         {
-            _simulationRunner.BeginSimulation(_inputActionAsset);
+            _simulationRunner.BeginSimulation();
 
             _simulationDebugView = await _viewStack.Push<SimulationDebugViewController, SimulationDebugViewModel>(
                 new SimulationDebugViewModel

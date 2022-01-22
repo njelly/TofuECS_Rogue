@@ -16,7 +16,7 @@ namespace Tofunaut.TofuECS_Rogue.ECS
             var gameState = s.GetSingletonComponentUnsafe<GameState>();
             var tilesBuffer = s.AnonymousBuffer<Tile>(gameState->TileBufferIndex);
             var tilesUpdatedEventArgs =
-                new TilesUpdatedEventArgs(new int[eventData.Tiles.Length], new Tile[eventData.Tiles.Length]);
+                new TilesUpdatedEventArgs(gameState->TileBufferIndex, new int[eventData.Tiles.Length], new Tile[eventData.Tiles.Length]);
             for (var i = 0; i < tilesBuffer.Size && i < eventData.Tiles.Length; i++)
             {
                 var tile = tilesBuffer.GetAtUnsafe(i);
@@ -37,11 +37,13 @@ namespace Tofunaut.TofuECS_Rogue.ECS
 
     public class TilesUpdatedEventArgs : EventArgs
     {
+        public readonly int TileBufferIndex;
         public readonly int[] Indexes;
         public readonly Tile[] Tiles;
 
-        public TilesUpdatedEventArgs(int[] indexes, Tile[] tiles)
+        public TilesUpdatedEventArgs(int tileBufferIndex, int[] indexes, Tile[] tiles)
         {
+            TileBufferIndex = tileBufferIndex;
             Indexes = indexes;
             Tiles = tiles;
         }

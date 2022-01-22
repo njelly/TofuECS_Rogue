@@ -11,10 +11,10 @@ namespace Tofunaut.TofuECS_Rogue.ECS
 
     public struct Tile
     {
-        public const int HoleHeight = 0;
-        public const int FloorHeight = 1;
-        public const int UnitHeight = 2;
-        public const int WallHeight = 3;
+        public const int FloorHeight = 0;
+        public const int UnitHeight = 1;
+        public const int WallHeight = 2;
+        
         public TileType Type;
         public int Height;
     }
