@@ -31,7 +31,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1593615643403473118}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1593615642021898584
 MonoBehaviour:
@@ -108,7 +108,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1593615643403473118}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -185,11 +185,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1593615642369424767}
+  - component: {fileID: 4542032757235788348}
   - component: {fileID: 1593615642369424768}
   - component: {fileID: 1593615642369424770}
   m_Layer: 0
-  m_Name: Main Camera
-  m_TagString: MainCamera
+  m_Name: GameCamera
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -206,9 +207,23 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1593615643403473118}
-  m_RootOrder: 0
+  m_Father: {fileID: 8354701731572444537}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4542032757235788348
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1593615642369424771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c72c0098ae2e8464290b68f528133336, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Target: {fileID: 0}
+  Offset: {x: 0, y: 0, z: -10}
 --- !u!20 &1593615642369424768
 Camera:
   m_ObjectHideFlags: 0
@@ -289,7 +304,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1593615642369424767}
   - {fileID: 1593615642284678849}
   - {fileID: 1593615642021898583}
   - {fileID: 8354701731572444537}
@@ -412,8 +426,9 @@ Transform:
   m_Children:
   - {fileID: 7639857668911670738}
   - {fileID: 5195250237547260363}
+  - {fileID: 1593615642369424767}
   m_Father: {fileID: 1593615643403473118}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6035646120933505023
 MonoBehaviour:
@@ -430,6 +445,8 @@ MonoBehaviour:
   _inputActionAsset: {fileID: -944628639613478452, guid: fe8f1d0bc280c4c9781a5f22641d03b8, type: 3}
   _tilemapManager: {fileID: 2874553362212723278}
   _unitViewManager: {fileID: 3442655755511832614}
+  _gameCamera: {fileID: 4542032757235788348}
+  _floorGenSeed: 12345
 --- !u!1 &6848094497174902575
 GameObject:
   m_ObjectHideFlags: 0

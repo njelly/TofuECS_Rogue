@@ -7,7 +7,7 @@ namespace Tofunaut.TofuECS_Rogue.ECS
         public unsafe void Initialize(Simulation s)
         {
             var player = s.GetSingletonComponentUnsafe<Player>();
-            player->UnitEntity = UnitSystem.CreateUnit(s, player->UnitConfig);
+            UnitSystem.CreateUnit(s, player->UnitEntity, player->UnitConfig);
         }
 
         public void Process(Simulation s) { }

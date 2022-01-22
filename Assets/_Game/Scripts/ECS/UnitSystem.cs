@@ -131,9 +131,8 @@ namespace Tofunaut.TofuECS_Rogue.ECS
             return true;
         }
 
-        public static int CreateUnit(Simulation s, in UnitConfig unitConfig)
+        public static void CreateUnit(Simulation s, int entity, in UnitConfig unitConfig)
         {
-            var entity = s.CreateEntity();
             var unitBuffer = s.Buffer<Unit>();
             unitBuffer.Set(entity, new Unit
             {
@@ -143,8 +142,13 @@ namespace Tofunaut.TofuECS_Rogue.ECS
                 Facing = unitConfig.InitFacing,
                 MoveSpeed = unitConfig.MoveSpeed,
             });
+        }
 
-            return entity;
+        public static int CreateEntityWithUnit(Simulation s, in UnitConfig unitConfig)
+        {
+            var e = s.CreateEntity();
+            CreateUnit(s, e, unitConfig);
+            return e;
         }
 
         public static unsafe void ChangeViewId(Simulation s, int entity, Unit* unit, ViewId newViewId)

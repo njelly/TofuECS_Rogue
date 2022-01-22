@@ -178,9 +178,5 @@ PrefabInstance:
       propertyPath: m_Name
       value: AppContext
       objectReference: {fileID: 0}
-    - target: {fileID: 6035646120933505023, guid: 444c9033bec8a472e9b241b8278f7326, type: 3}
-      propertyPath: _floorGenSeed
-      value: 12345
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 444c9033bec8a472e9b241b8278f7326, type: 3}

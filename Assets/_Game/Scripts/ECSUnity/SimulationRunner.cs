@@ -29,6 +29,7 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
         [SerializeField] private InputActionAsset _inputActionAsset;
         [SerializeField] private TilemapManager _tilemapManager;
         [SerializeField] private UnitViewManager _unitViewManager;
+        [SerializeField] private GameCamera _gameCamera;
         [SerializeField] private int _floorGenSeed;
 
         private PlayerInputManager _playerInputManager;
@@ -80,6 +81,7 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
             enabled = true;
             _tilemapManager.SetEnabled(true);
             _playerInputManager.Enable(_inputActionAsset);
+            _gameCamera.gameObject.SetActive(true);
 
             Current = new Simulation(new UnityLogService(), new ISystem[]
             {
@@ -92,6 +94,7 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
             Current.RegisterSingletonComponent(new XorShiftRandom(Convert.ToUInt64(DateTime.Now.Ticks)));
             Current.RegisterSingletonComponent(new Player
             {
+                UnitEntity = Current.CreateEntity(),
                 UnitConfig = new UnitConfig
                 {
                     Position = new Vector2(floorGenResult.PlayerSpawnX, floorGenResult.PlayerSpawnY),
@@ -115,7 +118,6 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
             
             Current.Initialize();
             
-            _tilemapManager.enabled = true;
             Current.SystemEvent(new FloorTilesInputEvent
             {
                 Tiles = floorGenResult.Tiles,
@@ -125,15 +127,17 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
 
         public void EndSimulation()
         {
-            enabled = false;
             
             Current.Buffer<Unit>().OnComponentAdded -= UnitAdded;
             Current.Buffer<Unit>().OnComponentRemoved -= UnitRemoved;
             UnitSystem.UnitViewIdChanged -= UnitViewIdChanged;
             FloorSystem.TilesUpdated -= TilesUpdated;
             
+            enabled = false;
             _unitViewManager.Clear();
             _playerInputManager.Disable();
+            _gameCamera.gameObject.SetActive(false);
+            _tilemapManager.SetEnabled(false);
 
             Current.Dispose();
             Current = null;
@@ -158,12 +162,19 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
                 return;
             
             _unitViewManager.CreateUnitView(Current, e.Entity, unit.CurrentViewId);
+
+            if (e.Entity == Current.GetSingletonComponent<Player>().UnitEntity &&
+                _unitViewManager.TryGetUnitView(e.Entity, out var unitView))
+                _gameCamera.Target = unitView.transform;
         }
 
         private void UnitRemoved(object sender, EntityEventArgs e)
         {
             if (!Current.Buffer<Unit>().Get(e.Entity, out var unit))
                 return;
+
+            if (_unitViewManager.TryGetUnitView(e.Entity, out var unitView) && _gameCamera.Target == unitView.transform)
+                _gameCamera.Target = null;
             
             _unitViewManager.ReleaseUnitView(e.Entity, unit.CurrentViewId);
         }
