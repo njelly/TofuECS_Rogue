@@ -367,12 +367,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca381ab4c1df4831aa95ac5d5d0f12a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _grid: {fileID: 3666634920215985537}
   _tilemap: {fileID: 178519827112744473}
-  _bedRock: {fileID: 11400000, guid: 23625b364990757439204681d06766af, type: 2}
-  _stone: {fileID: 11400000, guid: 84be742bad5f57443b51331734869b69, type: 2}
-  _ladderDown: {fileID: 11400000, guid: 976a185df24cc87458f7d46f354c1b97, type: 2}
-  _ladderUp: {fileID: 11400000, guid: b56d986fb915afd4abbce562ea90a3a0, type: 2}
+  _rogueTile: {fileID: 11400000, guid: ccd19087579653e448a292b8b9453552, type: 2}
 --- !u!156049354 &3666634920215985537
 Grid:
   m_ObjectHideFlags: 0

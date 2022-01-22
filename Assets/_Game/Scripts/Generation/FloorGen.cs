@@ -23,10 +23,10 @@ namespace Tofunaut.TofuECS_Rogue.Generation
         private static Tile[] GenerateFloor(FloorGenParams floorGenParams)
         {
             var r = new XorShiftRandom(Convert.ToUInt64(floorGenParams.Seed));
-            var toReturn = new Tile[Floor.MaxFloorSize * Floor.MaxFloorSize];
+            var toReturn = new Tile[Floor.FloorSize * Floor.FloorSize];
             for (var i = 0; i < toReturn.Length; i++)
             {
-                if (i is < Floor.MaxFloorSize or > Floor.MaxFloorSize * Floor.MaxFloorSize - Floor.MaxFloorSize || i % Floor.MaxFloorSize == 0 || i % Floor.MaxFloorSize == Floor.MaxFloorSize - 1)
+                if (i is < Floor.FloorSize or > Floor.FloorSize * Floor.FloorSize - Floor.FloorSize || i % Floor.FloorSize == 0 || i % Floor.FloorSize == Floor.FloorSize - 1)
                 {
                     toReturn[i].Type = TileType.Bedrock;
                 }
@@ -43,14 +43,14 @@ namespace Tofunaut.TofuECS_Rogue.Generation
             var roomHeight = (int) (r.NextDouble() * floorGenParams.MaxRoomSize) - floorGenParams.MinRoomSize +
                              floorGenParams.MinRoomSize;
 
-            var minX = 1 + (int) (r.NextDouble() * Floor.MaxFloorSize - roomWidth - 1);
-            var minY = 1 + (int) (r.NextDouble() * Floor.MaxFloorSize - roomHeight - 1);
+            var minX = 1 + (int) (r.NextDouble() * Floor.FloorSize - roomWidth - 1);
+            var minY = 1 + (int) (r.NextDouble() * Floor.FloorSize - roomHeight - 1);
 
             for (var x = minX; x < minX + roomWidth; x++)
             {
                 for (var y = minY; y < minY + roomHeight; y++)
                 {
-                    var i = x + y * Floor.MaxFloorSize;
+                    var i = x + y * Floor.FloorSize;
                     toReturn[i].Height = Tile.FloorHeight;
                 }
             }

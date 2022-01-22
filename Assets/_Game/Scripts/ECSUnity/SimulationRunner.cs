@@ -92,7 +92,7 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
                     MoveSpeed = 3,
                 },
             });
-            var tileBufferIndex = Current.RegisterAnonymousComponent<Tile>(Floor.MaxFloorSize * Floor.MaxFloorSize);
+            var tileBufferIndex = Current.RegisterAnonymousComponent<Tile>(Floor.FloorSize * Floor.FloorSize);
             Current.RegisterSingletonComponent<Floor>();
             Current.RegisterComponent<Unit>(16);
             Current.RegisterSingletonComponent(new GameState
