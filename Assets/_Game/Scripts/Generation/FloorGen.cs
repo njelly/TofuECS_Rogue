@@ -11,31 +11,43 @@ namespace Tofunaut.TofuECS_Rogue.Generation
         public int MinRoomSize;
         public int MaxRoomSize;
     }
+
+    public class FloorGenResult
+    {
+        public Tile[] Tiles;
+        public int PlayerSpawnX;
+        public int PlayerSpawnY;
+    }
     
     public static class FloorGen
     {
-        public static async void RequestFloor(FloorGenParams floorGenParams, Action<Tile[]> onComplete)
+        public static async void RequestFloor(FloorGenParams floorGenParams, Action<FloorGenResult> onComplete)
         {
-            var tiles = await Task.Run(() => GenerateFloor(floorGenParams));
-            onComplete?.Invoke(tiles);
+            var result = await Task.Run(() => GenerateFloor(floorGenParams));
+            onComplete?.Invoke(result);
+        }
+
+        public static async Task<FloorGenResult> RequestFloorAsync(FloorGenParams floorGenParams)
+        {
+            return await Task.Run(() => GenerateFloor(floorGenParams));
         }
         
-        private static Tile[] GenerateFloor(FloorGenParams floorGenParams)
+        private static FloorGenResult GenerateFloor(FloorGenParams floorGenParams)
         {
             var r = new XorShiftRandom(Convert.ToUInt64(floorGenParams.Seed));
-            var toReturn = new Tile[Floor.FloorSize * Floor.FloorSize];
-            for (var i = 0; i < toReturn.Length; i++)
+            var tiles = new Tile[Floor.FloorSize * Floor.FloorSize];
+            for (var i = 0; i < tiles.Length; i++)
             {
                 if (i is < Floor.FloorSize or > Floor.FloorSize * Floor.FloorSize - Floor.FloorSize || i % Floor.FloorSize == 0 || i % Floor.FloorSize == Floor.FloorSize - 1)
                 {
-                    toReturn[i].Type = TileType.Bedrock;
+                    tiles[i].Type = TileType.Bedrock;
                 }
                 else
                 {
-                    toReturn[i].Type = TileType.Stone;
+                    tiles[i].Type = TileType.Stone;
                 }
 
-                toReturn[i].Height = Tile.WallHeight;
+                tiles[i].Height = Tile.WallHeight;
             }
 
             var roomWidth = (int) (r.NextDouble() * floorGenParams.MaxRoomSize) - floorGenParams.MinRoomSize +
@@ -51,11 +63,22 @@ namespace Tofunaut.TofuECS_Rogue.Generation
                 for (var y = minY; y < minY + roomHeight; y++)
                 {
                     var i = x + y * Floor.FloorSize;
-                    toReturn[i].Height = Tile.FloorHeight;
+                    tiles[i].Height = Tile.FloorHeight;
                 }
             }
+
+            var ladderUpX = minX + 1 + (int) (r.NextDouble() * roomWidth - 1);
+            var ladderUpY = minY + 1 + (int) (r.NextDouble() * roomHeight - 1);
+
+            tiles[ladderUpX + ladderUpY * Floor.FloorSize].Height = Tile.WallHeight;
+            tiles[ladderUpX + ladderUpY * Floor.FloorSize].Type = TileType.LadderUp;
             
-            return toReturn;
+            return new FloorGenResult
+            {
+                PlayerSpawnX = ladderUpX,
+                PlayerSpawnY = ladderUpY,
+                Tiles = tiles,
+            };
         }
     }
 }

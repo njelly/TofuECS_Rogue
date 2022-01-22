@@ -2,8 +2,6 @@ using System.Numerics;
 
 namespace Tofunaut.TofuECS_Rogue.ECS
 {
-
-    
     public enum ViewId
     {
         None = 0,

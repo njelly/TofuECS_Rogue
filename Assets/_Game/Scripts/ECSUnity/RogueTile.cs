@@ -8,7 +8,7 @@ using Tile = UnityEngine.Tilemaps.Tile;
 namespace Tofunaut.TofuECS_Rogue.ECSUnity
 {
     [CreateAssetMenu(menuName = "TofuECS_Rogue/RogueTile")]
-    public class RogueTile : TileBase
+    public sealed class RogueTile : TileBase
     {
         public AnonymousBuffer<ECS.Tile> Buffer;
 
@@ -74,67 +74,150 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
 
         private static bool IsOnEdge(AnonymousBuffer<ECS.Tile> buffer, int index, in ECS.Tile ecsTile)
         {
-            if (TryGetNorthNeighbor(buffer, index, out var neighbor) && (neighbor.Type != ecsTile.Type ||
-                                                                       neighbor.Height != ecsTile.Height))
+            if (TryGetNorthNeighbor(buffer, index, out var neighbor) &&
+                (neighbor.Type != ecsTile.Type || neighbor.Height != ecsTile.Height))
+                return true;
+
+            if (TryGetNorthEastNeighbor(buffer, index, out neighbor) &&
+                (neighbor.Type != ecsTile.Type || neighbor.Height != ecsTile.Height))
+                return true;
+
+            if (TryGetEastNeighbor(buffer, index, out neighbor) &&
+                (neighbor.Type != ecsTile.Type || neighbor.Height != ecsTile.Height))
+                return true;
+
+            if (TryGetSouthEastNeighbor(buffer, index, out neighbor) &&
+                (neighbor.Type != ecsTile.Type || neighbor.Height != ecsTile.Height))
+                return true;
+
+            if (TryGetSouthNeighbor(buffer, index, out neighbor) &&
+                (neighbor.Type != ecsTile.Type || neighbor.Height != ecsTile.Height))
+                return true;
+
+            if (TryGetWestNeighbor(buffer, index, out neighbor) &&
+                (neighbor.Type != ecsTile.Type || neighbor.Height != ecsTile.Height))
                 return true;
             
-            if (TryGetEastNeighbor(buffer, index, out neighbor) && (neighbor.Type != ecsTile.Type ||
-                                                                    neighbor.Height != ecsTile.Height))
-                return true;
-            
-            if (TryGetSouthNeighbor(buffer, index, out neighbor) && (neighbor.Type != ecsTile.Type ||
-                                                                     neighbor.Height != ecsTile.Height))
-                return true;
-            
-            return TryGetWestNeighbor(buffer, index, out neighbor) && (neighbor.Type != ecsTile.Type ||
-                                                                       neighbor.Height != ecsTile.Height);
+            return TryGetNorthWestNeighbor(buffer, index, out neighbor) &&
+                   (neighbor.Type != ecsTile.Type || neighbor.Height != ecsTile.Height);
         }
         
-        private static bool TryGetNorthNeighbor(AnonymousBuffer<ECS.Tile> buffer, int index, out ECS.Tile northNeighbor)
+        private static bool TryGetNorthNeighbor(AnonymousBuffer<ECS.Tile> buffer, int index, out ECS.Tile neighbor)
         {
             if (index > Floor.FloorSize * Floor.FloorSize - Floor.FloorSize)
             {
-                northNeighbor = default;
+                neighbor = default;
                 return false;
             }
 
-            northNeighbor = buffer.GetAt(index + Floor.FloorSize);
+            neighbor = buffer.GetAt(index + Floor.FloorSize);
             return true;
         }
         
-        private static bool TryGetEastNeighbor(AnonymousBuffer<ECS.Tile> buffer, int index, out ECS.Tile eastNeighbor)
+        private static bool TryGetNorthEastNeighbor(AnonymousBuffer<ECS.Tile> buffer, int index, out ECS.Tile neighbor)
+        {
+            if (index > Floor.FloorSize * Floor.FloorSize - Floor.FloorSize)
+            {
+                neighbor = default;
+                return false;
+            }
+            
+            if (index % Floor.FloorSize == Floor.FloorSize - 1)
+            {
+                neighbor = default;
+                return false;
+            }
+
+            neighbor = buffer.GetAt(index + Floor.FloorSize + 1);
+            return true;
+        }
+        
+        private static bool TryGetEastNeighbor(AnonymousBuffer<ECS.Tile> buffer, int index, out ECS.Tile neighbor)
         {
             if (index % Floor.FloorSize == Floor.FloorSize - 1)
             {
-                eastNeighbor = default;
+                neighbor = default;
                 return false;
             }
 
-            eastNeighbor = buffer.GetAt(index + 1);
+            neighbor = buffer.GetAt(index + 1);
             return true;
         }
         
-        private static bool TryGetSouthNeighbor(AnonymousBuffer<ECS.Tile> buffer, int index, out ECS.Tile southNeighbor)
+        private static bool TryGetSouthEastNeighbor(AnonymousBuffer<ECS.Tile> buffer, int index, out ECS.Tile neighbor)
         {
             if (index < Floor.FloorSize)
             {
-                southNeighbor = default;
+                neighbor = default;
+                return false;
+            }
+            
+            if (index % Floor.FloorSize == Floor.FloorSize - 1)
+            {
+                neighbor = default;
                 return false;
             }
 
-            southNeighbor = buffer.GetAt(index - Floor.FloorSize);
+            neighbor = buffer.GetAt(index + Floor.FloorSize + 1);
             return true;
         }
         
-        private static bool TryGetWestNeighbor(AnonymousBuffer<ECS.Tile> buffer, int index, out ECS.Tile westNeighbor)
+        private static bool TryGetSouthNeighbor(AnonymousBuffer<ECS.Tile> buffer, int index, out ECS.Tile neighbor)
         {
-            if (index % Floor.FloorSize == 0)
+            if (index < Floor.FloorSize)
             {
-                westNeighbor = default;
+                neighbor = default;
                 return false;
             }
 
-            westNeighbor = buffer.GetAt(index - 1);
+            neighbor = buffer.GetAt(index - Floor.FloorSize);
+            return true;
+        }
+        
+        private static bool TryGetSouthWestNeighbor(AnonymousBuffer<ECS.Tile> buffer, int index, out ECS.Tile neighbor)
+        {
+            if (index < Floor.FloorSize)
+            {
+                neighbor = default;
+                return false;
+            }
+            if (index % Floor.FloorSize == 0)
+            {
+                neighbor = default;
+                return false;
+            }
+
+            neighbor = buffer.GetAt(index + Floor.FloorSize + 1);
+            return true;
+        }
+        
+        private static bool TryGetWestNeighbor(AnonymousBuffer<ECS.Tile> buffer, int index, out ECS.Tile neighbor)
+        {
+            if (index % Floor.FloorSize == 0)
+            {
+                neighbor = default;
+                return false;
+            }
+
+            neighbor = buffer.GetAt(index - 1);
+            return true;
+        }
+        
+        private static bool TryGetNorthWestNeighbor(AnonymousBuffer<ECS.Tile> buffer, int index, out ECS.Tile neighbor)
+        {
+            if (index > Floor.FloorSize * Floor.FloorSize - Floor.FloorSize)
+            {
+                neighbor = default;
+                return false;
+            }
+            
+            if (index % Floor.FloorSize == 0)
+            {
+                neighbor = default;
+                return false;
+            }
+
+            neighbor = buffer.GetAt(index - 1);
             return true;
         }
     }

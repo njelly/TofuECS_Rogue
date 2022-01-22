@@ -1,5 +1,4 @@
 using System;
-using System.Numerics;
 using Tofunaut.TofuECS;
 using Tofunaut.TofuECS_Rogue.ECS;
 using Tofunaut.TofuECS_Rogue.Utilities;
@@ -10,6 +9,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
 using PlayerInput = Tofunaut.TofuECS_Rogue.ECS.PlayerInput;
 using Tile = Tofunaut.TofuECS_Rogue.ECS.Tile;
+using Vector2 = System.Numerics.Vector2;
 
 namespace Tofunaut.TofuECS_Rogue.ECSUnity
 {
@@ -61,16 +61,22 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
             }
         }
 
-        public void BeginSimulation()
+        public async void BeginSimulation()
         {
             if (Current != null)
             {
                 Debug.LogError("a Simulation is already running");
                 return;
             }
+            
+            var floorGenResult = await FloorGen.RequestFloorAsync(new FloorGenParams
+            {
+                MaxRoomSize = 20,
+                MinRoomSize = 10,
+                Seed = 1234,
+            });
 
             enabled = true;
-
             _tilemapManager.SetEnabled(true);
             _playerInputManager.Enable(_inputActionAsset);
 
@@ -87,19 +93,19 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
             {
                 UnitConfig = new UnitConfig
                 {
+                    Position = new Vector2(floorGenResult.PlayerSpawnX, floorGenResult.PlayerSpawnY),
                     ViewId = ViewId.Player,
                     InitFacing = CardinalDirection4.East,
                     MoveSpeed = 3,
                 },
             });
             var tileBufferIndex = Current.RegisterAnonymousComponent<Tile>(Floor.FloorSize * Floor.FloorSize);
-            Current.RegisterSingletonComponent<Floor>();
-            Current.RegisterComponent<Unit>(16);
-            Current.RegisterSingletonComponent(new GameState
+            Current.RegisterSingletonComponent(new Floor
             {
-                CurrentFloorDepth = 0,
+                Depth = 1,
                 TileBufferIndex = tileBufferIndex,
             });
+            Current.RegisterComponent<Unit>(16);
 
             Current.Buffer<Unit>().OnComponentAdded += UnitAdded;
             Current.Buffer<Unit>().OnComponentRemoved += UnitRemoved;
@@ -108,22 +114,12 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
             
             Current.Initialize();
             
-            _stateMachine.Enter(State.LoadingData);
-            
-            FloorGen.RequestFloor(new FloorGenParams
+            _tilemapManager.enabled = true;
+            Current.SystemEvent(new FloorTilesInputEvent
             {
-                MaxRoomSize = 20,
-                MinRoomSize = 10,
-                Seed = 1234,
-            },tiles =>
-            {
-                _tilemapManager.enabled = true;
-                Current.SystemEvent(new FloorTilesInputEvent
-                {
-                    Tiles = tiles,
-                });
-                _stateMachine.Enter(State.Running);
+                Tiles = floorGenResult.Tiles,
             });
+            _stateMachine.Enter(State.Running);
         }
 
         public void EndSimulation()
