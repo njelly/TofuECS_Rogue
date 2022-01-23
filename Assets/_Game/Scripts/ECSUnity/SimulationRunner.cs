@@ -88,6 +88,7 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
                 new PlayerSystem(),
                 new UnitSystem(),
                 new FloorSystem(),
+                new ModifierSystem(),
             });
             
             

@@ -15,18 +15,19 @@ namespace Tofunaut.TofuECS_Rogue.ECS
             var i = 0;
             while (buffer.NextUnsafe(ref i, out var modifier))
             {
-                if(modifier->TimeLeft < 0)
+                if(modifier->TimeLeft <= 0)
                     return;
 
                 modifier->TimeLeft -= playerInput.DeltaTime;
                 
-                if(modifier->TimeLeft < 0)
-                    s.SystemEvent(new ModifierEndedEvent
-                    {
-                        ModifierBufferIndex = gameState.ModifierBufferIndex,
-                        ModifierIndex = i,
-                        ModifiableEntity = modifier->ModifiableEntity,
-                    });
+                // TODO: end the modifier, notify other systems, not implemented yet
+                //if(modifier->TimeLeft < 0)
+                //    s.SystemEvent(new ModifierEndedEvent
+                //    {
+                //        ModifierBufferIndex = gameState.ModifierBufferIndex,
+                //        ModifierIndex = i,
+                //        ModifiableEntity = modifier->ModifiableEntity,
+                //    });
             }
         }
     }
