@@ -19,6 +19,7 @@ namespace Tofunaut.TofuECS_Rogue.ECS
         public Vector2 CurrentPos;
         public CardinalDirection4 Facing;
         public float MoveSpeed;
+        public int SprintModifierEntity;
         
         // view
         public ViewId CurrentViewId;

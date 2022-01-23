@@ -7,8 +7,6 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
 {
     public class PlayerInputManager 
     {
-        private const float MoveHesitationDuration = 0.15f;
-
         private InputActionAsset _inputActionAsset;
         private PlayerInput _current;
 
@@ -27,6 +25,11 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
             moveAction.performed += Move_Performed;
             moveAction.canceled += Move_Canceled;
             moveAction.Enable();
+
+            var sprintAction = _inputActionAsset.FindAction("Player/Sprint");
+            sprintAction.performed += Sprint_Performed;
+            sprintAction.canceled += Sprint_Canceled;
+            sprintAction.Enable();
         }
 
         public void Disable()
@@ -44,6 +47,11 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
             moveAction.performed -= Move_Performed;
             moveAction.canceled -= Move_Canceled;
             moveAction.Disable();
+
+            var sprintAction = _inputActionAsset.FindAction("Player/Sprint");
+            sprintAction.performed -= Sprint_Performed;
+            sprintAction.canceled -= Sprint_Canceled;
+            sprintAction.Disable();
 
             _inputActionAsset = null;
         }
@@ -78,6 +86,18 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
         {
             _current.UnitInput.DirMagnitude = 0;
             _current.UnitInput.Dir = CardinalDirection4.None;
+        }
+
+        private void Sprint_Performed(InputAction.CallbackContext obj)
+        {
+            if (_current.UnitInput.DirMagnitude == UnitInput.MoveThreshold)
+                _current.UnitInput.DirMagnitude = UnitInput.SprintThreshold;
+        }
+
+        private void Sprint_Canceled(InputAction.CallbackContext obj)
+        {
+            if (_current.UnitInput.DirMagnitude == UnitInput.SprintThreshold)
+                _current.UnitInput.DirMagnitude = UnitInput.MoveThreshold;
         }
     }
 }

@@ -24,24 +24,46 @@ namespace Tofunaut.TofuECS_Rogue.ECS
 
         private static unsafe void ProcessUnitInput(Simulation s, int entity, Unit* unit, in PlayerInput playerInput)
         {
-            // for now, do nothing while the unit is moving (although we'll probably want to allow attacking)
-            if (unit->IsMoving) 
-                return;
-            
-            // if we're not moving and holding a direction, depending on the dir magnitude either face that direction
-            // or face that direction and start moving 
-            switch (unit->Input.DirMagnitude)
+            // if we're not moving, see if we can start
+            if (!unit->IsMoving)
             {
-                case UnitInput.FaceThreshold:
-                    unit->Facing = unit->Input.Dir;
-                    break;
-                case UnitInput.MoveThreshold:
-                    unit->Facing = unit->Input.Dir;
-                    // check that the unit can move there in the first place...
-                    var newTargetPos = unit->TargetPos + unit->Input.Dir.ToVector2();
-                    if(CanUnitOccupyCoord(s, entity, unit, (int)newTargetPos.X, (int)newTargetPos.Y))
-                        unit->TargetPos += unit->Input.Dir.ToVector2();
-                    break;
+                // do nothing if the dir magnitude is too low
+                if (unit->Input.DirMagnitude < UnitInput.FaceThreshold) 
+                    return;
+                
+                unit->Facing = unit->Input.Dir;
+                
+                if (unit->Input.DirMagnitude < UnitInput.MoveThreshold) 
+                    return;
+                
+                // check that the unit can move there in the first place...
+                var newTargetPos = unit->TargetPos + unit->Input.Dir.ToVector2();
+                if(CanUnitOccupyCoord(s, entity, unit, (int)newTargetPos.X, (int)newTargetPos.Y))
+                    unit->TargetPos += unit->Input.Dir.ToVector2();
+            }
+            else
+            {
+                if (!s.Buffer<Modifiable>().GetUnsafe(entity, out var modifiable)) 
+                    return;
+
+                switch (unit->Input.DirMagnitude)
+                {
+                    // use a modifier for sprinting if the threshold has been reached
+                    case >= UnitInput.SprintThreshold when unit->SprintModifierEntity == Simulation.InvalidEntityId:
+                        unit->SprintModifierEntity = ModifiableSystem.AssignModifierToModifiable(s, modifiable, new Modifier
+                        {
+                            ModifiableEntity = entity,
+                            ModifierClass = ModifierClass.MoveSpeed,
+                            StackedValue = 2f,
+                            Value = 2f,
+                            TimeLeft = -1f,
+                        }, StackBehavior.Add);
+                        break;
+                    case < UnitInput.SprintThreshold when unit->SprintModifierEntity != Simulation.InvalidEntityId:
+                        ModifiableSystem.RemoveModifierFromModifiable(s, modifiable, unit->SprintModifierEntity);
+                        unit->SprintModifierEntity = Simulation.InvalidEntityId;
+                        break;
+                }
             }
         }
 
@@ -50,7 +72,13 @@ namespace Tofunaut.TofuECS_Rogue.ECS
             if (!unit->IsMoving)
                 return;
 
-            var step = Vector2.Normalize(unit->TargetPos - unit->CurrentPos) * unit->MoveSpeed * playerInput.DeltaTime;
+            var moveSpeed = unit->MoveSpeed;
+            if (s.Buffer<Modifiable>().Get(unitEntity, out var modifiable) &&
+                ModifiableSystem.TryGetValueForModifierClass(s, modifiable, ModifierClass.MoveSpeed, StackBehavior.Add,
+                    out var moveSpeedMultiplier))
+                moveSpeed *= moveSpeedMultiplier;
+            
+            var step = Vector2.Normalize(unit->TargetPos - unit->CurrentPos) * moveSpeed * playerInput.DeltaTime;
             var toTargetDistSquared = Vector2.DistanceSquared(unit->TargetPos, unit->CurrentPos);
             // keep going if we haven't reached our target
             if (toTargetDistSquared > step.LengthSquared())
@@ -142,6 +170,12 @@ namespace Tofunaut.TofuECS_Rogue.ECS
                 MoveSpeed = unitConfig.MoveSpeed,
             });
             s.Buffer<Modifiable>().Set(entity);
+        }
+
+        public static void DestroyUnit(Simulation s, int entity)
+        {
+            s.Buffer<Unit>().Remove(entity);
+            s.Buffer<Modifiable>().Remove(entity);
         }
 
         public static int CreateEntityWithUnit(Simulation s, in UnitConfig unitConfig)
