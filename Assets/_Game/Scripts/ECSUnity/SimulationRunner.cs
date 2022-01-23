@@ -90,6 +90,23 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
                 new FloorSystem(),
             });
             
+            
+            // anonymous components
+            var tileBufferIndex = Current.RegisterAnonymousComponent<Tile>(Floor.FloorSize * Floor.FloorSize);
+            var modifierBufferIndex =
+                Current.RegisterAnonymousComponent<Modifier>(Unit.MaxUnits * Modifiable.MaxAssignedModifiers);
+            
+            
+            // singleton components
+            Current.RegisterSingletonComponent(new Floor
+            {
+                Depth = 1,
+                TileBufferIndex = tileBufferIndex,
+            });
+            Current.RegisterSingletonComponent(new GameState
+            {
+                ModifierBufferIndex = modifierBufferIndex,
+            });
             Current.RegisterSingletonComponent<PlayerInput>();
             Current.RegisterSingletonComponent(new XorShiftRandom(Convert.ToUInt64(DateTime.Now.Ticks)));
             Current.RegisterSingletonComponent(new Player
@@ -103,14 +120,13 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
                     MoveSpeed = 3,
                 },
             });
-            var tileBufferIndex = Current.RegisterAnonymousComponent<Tile>(Floor.FloorSize * Floor.FloorSize);
-            Current.RegisterSingletonComponent(new Floor
-            {
-                Depth = 1,
-                TileBufferIndex = tileBufferIndex,
-            });
-            Current.RegisterComponent<Unit>(16);
-
+            
+            
+            // entity components
+            Current.RegisterComponent<Unit>(Unit.MaxUnits);
+            Current.RegisterComponent<Modifiable>(Unit.MaxUnits);
+            
+            // subscribe to events...
             Current.Buffer<Unit>().OnComponentAdded += UnitAdded;
             Current.Buffer<Unit>().OnComponentRemoved += UnitRemoved;
             UnitSystem.UnitViewIdChanged += UnitViewIdChanged;

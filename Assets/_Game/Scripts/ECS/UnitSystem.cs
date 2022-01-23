@@ -133,8 +133,7 @@ namespace Tofunaut.TofuECS_Rogue.ECS
 
         public static void CreateUnit(Simulation s, int entity, in UnitConfig unitConfig)
         {
-            var unitBuffer = s.Buffer<Unit>();
-            unitBuffer.Set(entity, new Unit
+            s.Buffer<Unit>().Set(entity, new Unit
             {
                 TargetPos = unitConfig.Position,
                 CurrentPos = unitConfig.Position,
@@ -142,6 +141,7 @@ namespace Tofunaut.TofuECS_Rogue.ECS
                 Facing = unitConfig.InitFacing,
                 MoveSpeed = unitConfig.MoveSpeed,
             });
+            s.Buffer<Modifiable>().Set(entity);
         }
 
         public static int CreateEntityWithUnit(Simulation s, in UnitConfig unitConfig)

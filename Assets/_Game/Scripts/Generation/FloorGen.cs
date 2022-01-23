@@ -50,13 +50,13 @@ namespace Tofunaut.TofuECS_Rogue.Generation
                 tiles[i].Height = Tile.WallHeight;
             }
 
-            var roomWidth = (int) (r.NextDouble() * floorGenParams.MaxRoomSize) - floorGenParams.MinRoomSize +
+            var roomWidth = (int) (r.NextDouble() * (floorGenParams.MaxRoomSize - floorGenParams.MinRoomSize)) +
                             floorGenParams.MinRoomSize;
-            var roomHeight = (int) (r.NextDouble() * floorGenParams.MaxRoomSize) - floorGenParams.MinRoomSize +
+            var roomHeight = (int) (r.NextDouble() * (floorGenParams.MaxRoomSize - floorGenParams.MinRoomSize)) +
                              floorGenParams.MinRoomSize;
 
-            var minX = 1 + (int) (r.NextDouble() * Floor.FloorSize - roomWidth - 1);
-            var minY = 1 + (int) (r.NextDouble() * Floor.FloorSize - roomHeight - 1);
+            var minX = 1 + (int) (r.NextDouble() * (Floor.FloorSize - roomWidth - 1));
+            var minY = 1 + (int) (r.NextDouble() * (Floor.FloorSize - roomHeight - 1));
 
             for (var x = minX; x < minX + roomWidth; x++)
             {

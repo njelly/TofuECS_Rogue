@@ -11,6 +11,8 @@ namespace Tofunaut.TofuECS_Rogue.ECS
     
     public struct Unit
     {
+        public const int MaxUnits = 16;
+        
         // movement
         public bool IsMoving => CurrentPos != TargetPos;
         public Vector2 TargetPos;
@@ -29,6 +31,7 @@ namespace Tofunaut.TofuECS_Rogue.ECS
     {
         public const int FaceThreshold = 1;
         public const int MoveThreshold = 2;
+        public const int SprintThreshold = 3;
         public CardinalDirection4 Dir;
         public int DirMagnitude;
     }
