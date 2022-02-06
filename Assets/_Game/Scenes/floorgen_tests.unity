@@ -945,10 +945,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _floorSize: {x: 1024, y: 1024}
-  _minSectionSize: {x: 40, y: 40}
-  _maxSectionSize: {x: 100, y: 100}
-  _seed: 1600
-  _targetSectionCount: 100
+  _minSectionSize: {x: 50, y: 50}
+  _maxSectionSize: {x: 400, y: 400}
+  _seed: 1
+  _targetSectionCount: 5
   _nextButton: {fileID: 625496310}
   _resetButton: {fileID: 403626228}
   _numSectionsLabel: {fileID: 320728279}

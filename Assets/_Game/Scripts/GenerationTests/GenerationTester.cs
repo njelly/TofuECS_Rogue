@@ -64,7 +64,7 @@ namespace Tofunaut.TofuECS_Rogue.GenerationTests
             var result = _generator.GetResult();
             for (var i = 0; i < result.Tiles.Length; i++)
             {
-                var color = _sectionGradient.Evaluate(result.Tiles[i] / (float)_generator.NumSections);
+                var color = _sectionGradient.Evaluate(result.Tiles[i] / (float)_targetSectionCount);
                 var x = i % _floorSize.x;
                 var y = i / _floorSize.y;
                 _texture.SetPixel(x, y, color);

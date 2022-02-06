@@ -50,23 +50,44 @@ namespace Tofunaut.TofuECS_Rogue.Generation
         public bool TrySplitSections()
         {
             var newSections = new List<Section>(_sections.Count);
-            _sections.Sort((a, b) => a.Area.CompareTo(b.Area));
+            //_sections.Sort((a, b) => a.Area.CompareTo(b.Area));
             foreach (var currentSection in _sections)
             {
                 if (_sections.Count + newSections.Count >= _config.TargetSectionCount)
                     break;
 
+                var width = (int)(_r.NextDouble() * (currentSection.Width - _config.MinSectionWidth * 2));
+                if (width <= 0)
+                    continue;
+                
+                var height = (int)(_r.NextDouble() * (currentSection.Height - _config.MinSectionWidth * 2));
+                if (height <= 0)
+                    continue;
+                    
                 var allCorners = (Section.Corner[])Enum.GetValues(typeof(Section.Corner));
                 var corner = allCorners[(int)Math.Floor(_r.NextDouble() * allCorners.Length)];
-                var width = Math.Min((int)(_r.NextDouble() * (_config.MaxSectionWidth - _config.MinSectionWidth)) +
-                            _config.MinSectionWidth, currentSection.Width);
-                var height = Math.Min((int)(_r.NextDouble() * (_config.MaxSectionHeight - _config.MinSectionHeight)) +
-                             _config.MinSectionHeight, currentSection.Height);
-                
                 currentSection.Insert(width, height, corner, out var insertedSection, out var secondarySection);
-                
                 newSections.Add(insertedSection);
                 newSections.Add(secondarySection);
+                //if (currentSection.Width <= _config.MinSectionWidth * 2)
+                //{
+                //    if (currentSection.Width <= _config.MinSectionWidth)
+                //        continue;
+                //    
+                //    currentSection.SplitY(width + currentSection.MinX, out var newSection);
+                //    newSections.Add(newSection);
+                //}
+                //else if (currentSection.Height <= _config.MinSectionHeight * 2)
+                //{
+                //    if (currentSection.Height <= _config.MinSectionHeight)
+                //        continue;
+                //    
+                //    currentSection.SplitX(width + currentSection.MinX, out var newSection);
+                //    newSections.Add(newSection);
+                //}
+                //else
+                //{
+                //}
             }
 
             if (newSections.Count <= 0)
@@ -96,15 +117,6 @@ namespace Tofunaut.TofuECS_Rogue.Generation
             {
                 Tiles = _tiles,
             };
-        }
-
-        private void ShuffleSections(List<Section> sections)
-        {
-            for (var i = 0; i < sections.Count; i++)
-            {
-                var randIndex = (int)_r.NextDouble() * sections.Count;
-                (sections[i], sections[randIndex]) = (sections[randIndex], sections[i]);
-            }
         }
     }
 }
