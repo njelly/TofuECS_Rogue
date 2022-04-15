@@ -1,21 +1,19 @@
-namespace Tofunaut.TofuECS_Rogue.ECS
+﻿namespace Tofunaut.TofuECS_Rogue.ECS
 {
-    public enum TileType
+    public enum Material
     {
-        Void = 0,
-        Bedrock = 1,
-        Stone = 2,
-        LadderDown = 3,
-        LadderUp = 4,
+        Void,
+        Air,
+        Stone,
+        Water,
+        Dirt,
     }
-
+    
     public struct Tile
     {
-        public const int FloorHeight = 0;
-        public const int UnitHeight = 1;
-        public const int WallHeight = 2;
-        
-        public TileType Type;
         public int Height;
+        public Material Material;
+        public int Integrity;
+        public bool IsBlocked;
     }
 }

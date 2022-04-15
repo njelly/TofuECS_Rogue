@@ -1,40 +1,23 @@
-using Tofunaut.Bootstrap;
-using Tofunaut.TofuECS_Rogue.ECSUnity;
-using Tofunaut.TofuECS_Rogue.ECSUnity.UI;
-using Tofunaut.TofuECS_Rogue.UI;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEngine.InputSystem;
+using Tofunaut.Bootstrap;
 
 namespace Tofunaut.TofuECS_Rogue
 {
     public class AppContext : MonoBehaviour
     {
         [SerializeField] private Canvas _canvas;
-        [SerializeField] private InputActionAsset _inputActionAsset;
-        [SerializeField] private SimulationRunner _simulationRunner;
 
-        [Header("UI Views")]
-        [SerializeField] private AssetReference _startScreenViewReference;
-        [SerializeField] private AssetReference _simulationDebugViewReference;
+        private AppStateMachine _appStateMachine;
+        private CanvasStack _canvasStack;
 
-        private async void Start()
+        private async void Awake()
         {
-            DontDestroyOnLoad(gameObject);
+            _canvasStack = new CanvasStack(_canvas);
+            _appStateMachine = new AppStateMachine();
             
-            var viewStack = new ViewStack(_canvas);
-            viewStack.RegisterViewController<StartScreenViewController, StartScreenViewModel>(
-                _startScreenViewReference);
-            viewStack.RegisterViewController<SimulationDebugViewController, SimulationDebugViewModel>(
-                _simulationDebugViewReference);
-            
-            var appStateMachine = new AppStateMachine();
-            appStateMachine.RegisterState<StartScreenState, StartScreenStateRequest>(
-                new StartScreenState(appStateMachine, viewStack));
-            appStateMachine.RegisterState<InGameState, InGameStateRequest>(new InGameState(appStateMachine, viewStack,
-                _inputActionAsset, _simulationRunner));
+            _appStateMachine.RegisterState<InGameState, InGameStateRequest>(new InGameState());
 
-            await appStateMachine.EnterState(new StartScreenStateRequest());
+            await _appStateMachine.EnterState(new InGameStateRequest());
         }
     }
 }

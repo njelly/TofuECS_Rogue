@@ -16,15 +16,7 @@ MonoBehaviour:
   m_Data:
     m_SerializedData: []
   m_GUID: 5b09268d858444baeb7a9d555a4de8c1
-  m_SerializeEntries:
-  - m_GUID: babf7c33f18c2476ab0ac1f0798d253b
-    m_Address: Assets/_Game/Prefabs/StartScreenView.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-  - m_GUID: e0da98cd904124bea9cad52c57e55964
-    m_Address: Assets/_Game/Prefabs/UI/SimulationDebugView.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
+  m_SerializeEntries: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: bc356508d40b94121b86dd497b62a354, type: 2}
   m_SchemaSet:
