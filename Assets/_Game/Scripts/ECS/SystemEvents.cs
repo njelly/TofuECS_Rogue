@@ -7,4 +7,10 @@
         public int NewY;
         public Facing Facing;
     }
+
+    public struct CreateUnitInput
+    {
+        public Unit Unit;
+        public Health? Health;
+    }
 }

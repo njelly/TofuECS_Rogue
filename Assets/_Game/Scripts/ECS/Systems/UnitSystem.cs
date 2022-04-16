@@ -2,11 +2,12 @@
 
 namespace Tofunaut.TofuECS_Rogue.ECS
 {
-    public unsafe class UnitSystem : ISystem, ISystemEventListener<MoveUnitInput>
+    public unsafe class UnitSystem : ISystem, ISystemEventListener<MoveUnitInput>, ISystemEventListener<CreateUnitInput>
     {
-        public delegate void UnitMovedDelegate(int entityId, in Unit unit);
+        public delegate void UnitDelegate(int entityId, in Unit unit);
 
-        public static event UnitMovedDelegate UnitMoved;
+        public static event UnitDelegate UnitMoved;
+        public static event UnitDelegate UnitCreated;
         
         public void Initialize(Simulation s) { }
 
@@ -38,6 +39,17 @@ namespace Tofunaut.TofuECS_Rogue.ECS
             unit->Facing = eventData.Facing;
             
             UnitMoved?.Invoke(eventData.EntityId, *unit);
+        }
+
+        public void OnSystemEvent(Simulation s, in CreateUnitInput eventData)
+        {
+            var entity = s.CreateEntity();
+            s.Buffer<Unit>().Set(entity, eventData.Unit);
+
+            if (eventData.Health != null)
+                s.Buffer<Health>().Set(entity, eventData.Health.Value);
+            
+            UnitCreated?.Invoke(entity, eventData.Unit);
         }
     }
 }

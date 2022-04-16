@@ -1,0 +1,16 @@
+{
+    "name": "TofuECS_Rogue.ECSUnity",
+    "rootNamespace": "",
+    "references": [
+        "GUID:b5a1e93272d21d74589a50f224d34d06"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
