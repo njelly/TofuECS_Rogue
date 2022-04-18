@@ -1,3 +1,4 @@
+using Tofunaut.TofuECS_Rogue.ECS;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -17,8 +18,9 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
             _tilemap.transform.SetParent(gridGo.transform, false);
         }
 
-        public void UpdateTile(int x, int y, in Tile tile)
+        public void UpdateTile(int x, int y, in ECS.Tile tile)
         {
+            _rogueTile.tile = tile;
             _tilemap.SetTile(new Vector3Int(x, y, 0), _rogueTile);
         }
 

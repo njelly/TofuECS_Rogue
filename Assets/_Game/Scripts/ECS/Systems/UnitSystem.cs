@@ -18,24 +18,31 @@ namespace Tofunaut.TofuECS_Rogue.ECS
             var unitBuffer = s.Buffer<Unit>();
             if (!unitBuffer.GetUnsafe(eventData.EntityId, out var unit))
                 return;
+
+            var worldData = s.GetSingletonComponent<WorldData>();
+            var tileBuffer = s.AnonymousBuffer<Tile>(worldData.TileBufferIndex);
+            var newTileIndex = worldData.IndexFromCoord(eventData.NewX, eventData.NewY);
             
-            var tileBuffer = s.AnonymousBuffer<Tile>(unit->TileBufferIndex);
-            var newTileIndex = s.GetSingletonComponent<WorldData>().IndexFromCoord(eventData.NewX, eventData.NewY);
-            var newTile = tileBuffer.GetAtUnsafe(newTileIndex);
-            
-            // if the new tile is not blocked, then we can move the unit to that tile
-            if (!newTile->IsBlocked)
+            // make sure the newTileIndex is valid
+            if (newTileIndex >= 0 && newTileIndex < tileBuffer.Size)
             {
-                // if this unit blocks tiles, unblock the tile we were currently occupying and block the new one
-                if (unit->DoesBlockTile)
+                var newTile = tileBuffer.GetAtUnsafe(newTileIndex);
+            
+                // if the new tile is not blocked, then we can move the unit to that tile
+                if (!newTile->IsBlocked)
                 {
-                    var currentTile = tileBuffer.GetAtUnsafe(unit->TileIndex);
-                    currentTile->IsBlocked = false;
-                    newTile->IsBlocked = true;
-                }
+                    // if this unit blocks tiles, unblock the tile we were currently occupying and block the new one
+                    if (unit->DoesBlockTile)
+                    {
+                        var currentTile = tileBuffer.GetAtUnsafe(unit->TileIndex);
+                        currentTile->IsBlocked = false;
+                        newTile->IsBlocked = true;
+                    }
                 
-                unit->TileIndex = newTileIndex;
+                    unit->TileIndex = newTileIndex;
+                }
             }
+            
             unit->Facing = eventData.Facing;
             
             UnitMoved?.Invoke(eventData.EntityId, *unit);
@@ -51,5 +58,19 @@ namespace Tofunaut.TofuECS_Rogue.ECS
             
             UnitCreated?.Invoke(entity, eventData.Unit);
         }
+    }
+    
+    public struct MoveUnitInput
+    {
+        public int EntityId;
+        public int NewX;
+        public int NewY;
+        public Facing Facing;
+    }
+
+    public struct CreateUnitInput
+    {
+        public Unit Unit;
+        public Health? Health;
     }
 }

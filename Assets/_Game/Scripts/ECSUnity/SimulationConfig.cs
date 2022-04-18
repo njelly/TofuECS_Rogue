@@ -4,8 +4,6 @@ namespace Tofunaut.TofuECS_Rogue.ECSUnity
     {
         public int Seed;
         public int WorldWidth;
-        public int WorldHeight;
-        public int MaxUnitComponents;
-        public int MaxHealthComponents;
+        public ECS.Tile[] InitialTiles;
     }
 }
